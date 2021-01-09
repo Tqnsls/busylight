@@ -24,10 +24,59 @@ connector and a USB-A female connector.
 ### Basic Human Interface Device Info
 
 - Vendor ID values:
-- I/O Interface:
-- Command Length:
+- I/O Interface: `HID` send_feature_report
+- Command Length: 8-bytes
 
-### Command Format
+### Command Formats
+
+The Blink family of devices has (at the time of writing) three
+different varieties: mark I, mark II and mark III. In general, most
+commands are eight bytes long. The first byte is a `report` value
+which is either `0x01` or `0x02`. The second byte is an `action` value
+which is the ordinal value of an a single character string. The
+`action` value determines the format of the rest of the command
+buffer.
+
+**Generic Blink Command**
+```C
+typedef struct {
+	unsigned int report; /* 56:63 */
+	unsigned int action; /* 48:55 */
+	unsigned int arg0;	 /* 40:47 */
+	unsigned int arg1;	 /* 32:39 */
+	unsigned int arg2;	 /* 24:31 */
+	unsigned int arg3;	 /* 16:23 */
+	unsigned int arg4;   /* 08:17 */
+	unsigned int arg5;   /* 00:07 */
+} blink_command_t;
+```
+
+#### Color Commands
+
+```C
+typedef struct {
+	unsigned int report;  /* 56:63 */
+	unsigned int action;  /* 48:55 */
+	unsigned int red;	  /* 40:47 */
+	unsigned int green;	  /* 32:39 */
+	unsigned int blue;	  /* 24:31 */
+	unsigned int fade_ms; /* 08:23 */
+	unsigned int led;     /* 00:07 */
+} blink_color_command_t;
+```
+
+#### Pattern Commands
+```C
+typedef struct {
+	unsigned int report;  /* 56:63 */
+	unsigned int action;  /* 48:55 */
+	unsigned int red;	  /* 40:47 */
+	unsigned int green;	  /* 32:39 */
+	unsigned int blue;	  /* 24:31 */
+	unsigned int fade_ms; /* 08:23 */
+	unsigned int led;     /* 00:07 */
+} blink_pattern_command_t;
+```
 
 ### Device Operation
 
