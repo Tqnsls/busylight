@@ -36,7 +36,6 @@ Blynclight Plus<sup>14</sup>
 
 ## Features
 - Control lights from the [command-line][HELP].
-- Control lights via a [Web API][WEBAPI].
 - Import `busylight` into your own Python project.
 - Supported on MacOS and Linux
 - Windows not currently supported.
@@ -67,21 +66,12 @@ Or even better, open a pull request!
 Thank you to [@todbot][todbot] and the very nice people at [ThingM][thingm] who
 graciously and unexpectedly gifted me with two `blink(1) mk3` lights!
 
-## Basic Install
+## Install
 
-Installs only the command-line `busylight` tool and associated
-modules.
+Install the command-line `busylight` tool and associated modules.
 
 ```console
 $ python3 -m pip install busylight-for-humans 
-```
-
-## Web API Install
-
-Installs `uvicorn` and `FastAPI` in addition to `busylight`:
-
-```console
-$ python3 -m pip install busylight-for-humans[webapi]
 ```
 
 ## Development Install
@@ -99,12 +89,14 @@ I use the tool [poetry][poetry-docs] to manage various aspects of this project, 
 $ python3 -m pip install poetry 
 $ cd path/to/busylight
 $ poetry shell
-<venv> $ poetry install -E webapi
+<venv> $ poetry install
 <venv> $ which busylight
-<venv> $ which busyserve
 ```
 
-After installing into the virtual environment, the project is now available in editable mode.  Changes made in the source will be reflected in the runtime behavior when running in the poetry initiated shell.
+After installing into the virtual environment, the project is now
+available in editable mode.  Changes made in the source will be
+reflected in the runtime behavior when running in the poetry initiated
+shell.
 
 ## Linux Post-Install Activities
 
@@ -134,79 +126,6 @@ $ busylight blink green fast # blinking faster green and off
 $ busylight --all on         # turn all lights on green
 $ busylight --all off        # turn all lights off
 ```
-
-## HTTP API Examples
-
-First start the `busylight` API server using the `busyserv` command line interface:
-```console
-$ busyserve -D
-INFO:     Started server process [40064]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-...
-```
-
-The API is fully documented and available via these URLs:
-
-- `https://localhost:8000/redoc`
-- `https://localhost:8000/docs`
-
-
-Now you can use the web API endpoints which return JSON payloads:
-
-```console
-  $ curl -s http://localhost:8000/lights/status | jq
-  ...
-  $ curl -s http://localhost:8000/light/0/status | jq
-  ...
-  $ curl -s http://localhost:8000/light/0/on | jq
-  {
-    "light_id": 0,
-    "action": "on",
-    "color": "green",
-	"rgb": [0, 128, 0]
-  }
-  $ curl -s http://localhost:8000/light/0/off | jq
-  {
-    "light_id": 0,
-    "action": "off"
-  }
-  $ curl -s http://localhost:8000/light/0/on?color=purple | jq
-  {
-    "light_id": 0,
-    "action": "on",
-    "color": "purple",
-	"rgb": [128, 0, 128]
-  }
-  $ curl -s http://localhost:8000/lights/on | jq
-  {
-    "light_id": "all",
-    "action": "on",
-    "color": "green",
-	"rgb", [0, 128, 0]
-  }
-  $ curl -s http://localhost:8000/lights/off | jq
-  {
-    "light_id": "all",
-    "action": "off"
-  }
-  $ curl -s http://localhost:8000/lights/rainbow | jq
-  {
-    "light_id": "all",
-    "action": "effect",
-    "name": "rainbow"
-  }
-```
-
-### Authentication
-The API can be secured with a simple username and password through
-[HTTP Basic Authentication][BASICAUTH]. To require authentication
-for all API requests, set the `BUSYLIGHT_API_USER` and
-`BUSYLIGHT_API_PASS` environmental variables before running
-`busyserve`.
-
-> :warning: **SECURITY WARNING**: HTTP Basic Auth sends usernames and passwords in *cleartext* (i.e., unencrypted). Use of SSL is highly recommended!
 
 ## Code Examples
 
